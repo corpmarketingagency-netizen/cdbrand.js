@@ -1,0 +1,51 @@
+(function () {
+  "use strict";
+
+  console.log("Five9 branding loaded", new Date().toISOString());
+
+  const CONFIG = {
+    logoUrl: "https://i.postimg.cc/9FGkNhQF/Artboard-3-copy-2.png",
+    paddingTop: 100,
+    maxRuntimeMs: 30000
+  };
+
+  const start = Date.now();
+
+  function removeAll(selector) {
+    document.querySelectorAll(selector).forEach(el => el.remove());
+  }
+
+  function applyBranding() {
+    const logo =
+      document.querySelector("#logoContainer img") ||
+      document.querySelector(".login-form #logoContainer img") ||
+      document.querySelector(".login-form img[src*='logo']") ||
+      document.querySelector("img[src*='Five9']");
+
+    if (!logo) return false;
+
+    logo.src = CONFIG.logoUrl;
+    logo.style.paddingTop = CONFIG.paddingTop + "px";
+    logo.style.maxWidth = "100%";
+    logo.style.height = "auto";
+
+    removeAll("#headerText");
+    removeAll("div.navbar.navbar-fixed-top");
+    removeAll("div.regional-links-container");
+    removeAll(".footer.text-center");
+
+    return true;
+  }
+
+  const observer = new MutationObserver(() => {
+    applyBranding();
+    if (Date.now() - start > CONFIG.maxRuntimeMs) observer.disconnect();
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+
+  applyBranding();
+})();
